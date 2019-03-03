@@ -4,6 +4,8 @@ import ujson as json
 from collections import Counter
 import numpy as np
 from codecs import open
+import os
+import config
 
 '''
 The content of this file is mostly copied from https://github.com/HKUST-KnowComp/R-Net/blob/master/prepro.py
@@ -268,7 +270,15 @@ def save(filename, obj, message=None):
             json.dump(obj, fh)
 
 
-def preproc(config):
+def preproc():
+    if not os.path.exists(config.target_dir):
+        os.makedirs(config.target_dir)
+    if not os.path.exists(config.event_dir):
+        os.makedirs(config.event_dir)
+    if not os.path.exists(config.save_dir):
+        os.makedirs(config.save_dir)
+    if not os.path.exists(config.answer_dir):
+        os.makedirs(config.answer_dir)
     word_counter, char_counter = Counter(), Counter()
     train_examples, train_eval = process_file(config.train_file, "train", word_counter, char_counter)
     dev_examples, dev_eval = process_file(config.dev_file, "dev", word_counter, char_counter)
@@ -297,3 +307,6 @@ def preproc(config):
     save(config.char2idx_file, char2idx_dict, message="char dictionary")
     save(config.dev_meta, dev_meta, message="dev meta")
     # save(config.test_meta, test_meta, message="test meta")
+
+if __name__ == "__main__":
+    preproc()

@@ -1,6 +1,4 @@
-from config import config, device
-from preproc import preproc
-from absl import app
+import config
 from math import log2
 import os
 import numpy as np
@@ -16,11 +14,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torch.cuda
 from torch.utils.data import Dataset
+import argparse
 
 '''
 Some functions are from the official evaluation script.
 '''
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class SQuADDataset(Dataset):
     def __init__(self, npz_file, num_steps, batch_size):
@@ -244,7 +244,7 @@ def test(model, dataset, eval_file):
     return metrics
 
 
-def train_entry(config):
+def train_entry():
     from models import QANet
 
     with open(config.word_emb_file, "r") as fh:
@@ -295,7 +295,7 @@ def train_entry(config):
         torch.save(model, fn)
 
 
-def test_entry(config):
+def test_entry():
     with open(config.dev_eval_file, "r") as fh:
         dev_eval_file = json.load(fh)
     dev_dataset = SQuADDataset(config.dev_record_file, -1, config.batch_size)
@@ -303,26 +303,22 @@ def test_entry(config):
     model = torch.load(fn)
     test(model, dev_dataset, dev_eval_file)
 
-
-def main(_):
-    if config.mode == "train":
-        train_entry(config)
-    elif config.mode == "data":
-        preproc(config)
-    elif config.mode == "debug":
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", action="store", dest="mode", default="train", help="train/test/debug")
+    pargs = parser.parse_args()
+    if pargs.mode == "train":
+        train_entry()
+    elif pargs.mode == "debug":
         config.batch_size = 2
         config.num_steps = 32
         config.test_num_batches = 2
         config.val_num_batches = 2
         config.checkpoint = 2
         config.period = 1
-        train_entry(config)
-    elif config.mode == "test":
-        test_entry(config)
+        train_entry()
+    elif pargs.mode == "test":
+        test_entry()
     else:
         print("Unknown mode")
         exit(0)
-
-
-if __name__ == '__main__':
-    app.run(main)
