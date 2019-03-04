@@ -294,7 +294,6 @@ def train_entry():
         fn = os.path.join(config.save_dir, "model.pt")
         torch.save(model, fn)
 
-
 def test_entry():
     with open(config.dev_eval_file, "r") as fh:
         dev_eval_file = json.load(fh)
@@ -307,6 +306,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", action="store", dest="mode", default="train", help="train/test/debug")
     pargs = parser.parse_args()
+    print("Current device is {}".format(device))
     if pargs.mode == "train":
         train_entry()
     elif pargs.mode == "debug":

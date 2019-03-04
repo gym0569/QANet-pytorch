@@ -1,9 +1,5 @@
 import os
 
-'''
-The content of this file is mostly copied from https://github.com/HKUST-KnowComp/R-Net/blob/master/config.py
-'''
-
 home = os.path.expanduser(".")
 train_file = os.path.join(home, "data", "squad", "train-v1.1.json")
 dev_file = os.path.join(home, "data", "squad", "dev-v1.1.json")
@@ -45,9 +41,9 @@ num_threads = 4 #Number of threads in input pipeline
 is_bucket = False #build bucket batch iterator or not
 bucket_range = [40, 401, 40] #the range of bucket
 
-batch_size = 16 #Batch size
+batch_size = 8 #Batch size
 num_steps = 60000 #Number of steps
-checkpoint = 1000 #checkpoint to save and evaluate the model
+checkpoint = 200 #checkpoint to save and evaluate the model
 period = 100 #period to save batch loss
 val_num_batches = 150 #Number of batches to evaluate the model
 test_num_batches = 150 #Number of batches to evaluate the model
@@ -60,8 +56,8 @@ ema_decay = 0.9999 #Exponential moving average decay
 beta1 = 0.8 #Beta 1
 beta2 = 0.999 #Beta 2
 early_stop = 10 #Checkpoints for early stop
-connector_dim = 96 #Dimension of connectors of each layer
-num_heads = 2 #Number of heads in multi-head attention
+d_model = 96 #Dimension of connectors of each layer
+num_heads = 8 #Number of heads in multi-head attention
 
 # Extensions (Uncomment corresponding line in download.sh to download the required data)
 glove_char_file = os.path.join(home, "data", "glove", "glove.840B.300d-char.txt")
